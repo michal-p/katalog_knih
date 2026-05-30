@@ -1,0 +1,8 @@
+/vendor/
+/node_modules/
+.env
+/.vscode
+/public/assets/css/
+/public/assets/js/
+!/public/assets/.gitkeep
+TERMINAL_COMMANDS.md
