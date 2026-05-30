@@ -1,0 +1,16 @@
+[
+  {
+    "title": "Clean Code",
+    "author": "Robert C. Martin",
+    "year": 2008,
+    "annotation": "A Handbook of Agile Software Craftsmanship.",
+    "rating": 5
+  },
+  {
+    "title": "The Pragmatic Programmer",
+    "author": "Andrew Hunt, David Thomas",
+    "year": 1999,
+    "annotation": "From Journeyman to Master.",
+    "rating": 5
+  }
+]
