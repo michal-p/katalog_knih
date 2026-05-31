@@ -22,18 +22,13 @@ spl_autoload_register(function ($class) {
 
 // 2. Initialize the application Router
 use App\Core\Router;
+use App\Controllers\BookController;
+
 $router = new Router();
 
 // 3. Define the application routes
-// For now, we only setup simple test pages
-$router->get('/', function() {
-    echo "<h1>Welcome to E-book Catalog!</h1>";
-    echo "<p>Our Router is working successfully! Everything is routed through public/index.php.</p>";
-});
-
-$router->get('/test', function() {
-    echo "<h1>Test Page</h1>";
-});
+// Route the home page ('/') to the index method of the BookController
+$router->get('/', [new BookController(), 'index']);
 
 // 4. Dispatch the request (match the URL and execute the code)
 $router->dispatch();

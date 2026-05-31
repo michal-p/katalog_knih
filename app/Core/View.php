@@ -9,21 +9,29 @@ class View
      *
      * @param string $template Path to the view file relative to the views directory (e.g., 'books/index')
      * @param array $data Associative array of data to be extracted as variables
+     * @param string $layout Name of the layout wrapper file (defaults to 'main')
      */
-    public static function render(string $template, array $data = []): void
+    public static function render(string $template, array $data = [], string $layout = 'main'): void
     {
         // The extract() function converts array keys into variables
-        // For example, ['books' => $booksArray] becomes a $books variable in the template
         extract($data);
 
-        // Build the absolute path to the view file
-        $file = __DIR__ . '/../../views/' . $template . '.php';
+        // Build the absolute path to the inner view content
+        $contentView = __DIR__ . '/../../views/' . $template . '.php';
 
-        if (file_exists($file)) {
-            // Include the template file which will render the HTML
-            require $file;
-        } else {
+        if (!file_exists($contentView)) {
             die("View template not found: [{$template}]");
+        }
+
+        // Build the absolute path to the layout wrapper
+        $layoutFile = __DIR__ . '/../../views/layouts/' . $layout . '.php';
+
+        if (file_exists($layoutFile)) {
+            // The layout file will include the $contentView inside its body
+            require $layoutFile;
+        } else {
+            // Fallback if no layout exists
+            require $contentView;
         }
     }
 }
