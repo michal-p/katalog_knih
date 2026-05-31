@@ -1,7 +1,8 @@
-// Main SCSS file
-body {
-  font-family: Arial, sans-serif;
-  background-color: #f4f4f4;
-  margin: 0;
-  padding: 0;
-}
+// Main Entry Point for SCSS
+// This file acts as a manifest and only imports other modules.
+
+@use 'variables';
+@use 'base';
+@use 'layout';
+@use 'components';
+@use 'print';

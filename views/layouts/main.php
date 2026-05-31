@@ -4,24 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Katalóg e-kníh</title>
-    <!-- Tu neskôr napojíme náš CSS súbor z Webpacku -->
+    <!-- Modern Google Font (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <!-- Our generated CSS file from Webpack -->
+    <link rel="stylesheet" href="/assets/css/app.css">
 </head>
 <body>
-    <header style="background: #333; color: white; padding: 1rem;">
-        <h1>📚 Katalóg e-kníh</h1>
-        <nav>
-            <a href="/" style="color: white; margin-right: 15px;">Domov</a>
-            <a href="/admin" style="color: white;">Administrácia</a>
-        </nav>
-    </header>
+    <div class="app-container">
+        <header class="main-header">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="icon">📚</span>
+                    <h1>Katalóg e-kníh</h1>
+                </div>
+                <nav class="main-nav">
+                    <a href="/" class="nav-link active">Domov</a>
+                    <a href="/admin" class="nav-link">Administrácia</a>
+                </nav>
+            </div>
+        </header>
 
-    <main style="padding: 2rem;">
-        <!-- Tu sa vloží náš konkrétny pohľad (napríklad zoznam kníh) -->
-        <?php require $contentView; ?>
-    </main>
+        <main class="main-content">
+            <!-- The specific view template (e.g., index.php) will be injected here -->
+            <?php require $contentView; ?>
+        </main>
 
-    <footer style="background: #eee; padding: 1rem; text-align: center; margin-top: 2rem;">
-        <p>&copy; <?php echo date('Y'); ?> E-book Catalog.</p>
-    </footer>
+        <footer class="main-footer">
+            <p>&copy; <?php echo date('Y'); ?> E-book Catalog. Zkušební úkol.</p>
+        </footer>
+    </div>
 </body>
 </html>

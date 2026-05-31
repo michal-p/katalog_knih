@@ -1,17 +1,38 @@
-<h2>Zoznam všetkých kníh</h2>
+<div class="page-header">
+    <h2>Zoznam všetkých kníh</h2>
+    <!-- Tlačidlo pre tlač výpisu (požiadavka zo zadania) -->
+    <button class="btn btn-outline" onclick="window.print()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+        Tlačiť zoznam
+    </button>
+</div>
 
 <?php if (empty($books)): ?>
-    <p>V katalógu sa zatiaľ nenachádzajú žiadne knihy. Prosím, naimportujte ich v administrácii.</p>
+    <div class="empty-state">
+        <div class="empty-icon">📖</div>
+        <h3>Žiadne knihy</h3>
+        <p>V katalógu sa zatiaľ nenachádzajú žiadne záznamy. Presuňte sa do administrácie a naimportujte prvé e-knihy.</p>
+    </div>
 <?php else: ?>
-    <ul style="line-height: 1.6;">
+    <div class="books-grid">
         <?php foreach ($books as $book): ?>
-            <li>
-                <strong><?php echo htmlspecialchars($book['title']); ?></strong> 
-                od <?php echo htmlspecialchars($book['author']); ?> 
-                (<?php echo htmlspecialchars($book['year']); ?>)
-                <br>
-                <a href="/books/<?php echo $book['id']; ?>">Zobraziť detail</a>
-            </li>
+            <div class="book-card">
+                <div class="book-card-inner">
+                    <div class="book-cover-placeholder">
+                        <!-- Zobrazenie prvého písmena z názvu knihy -->
+                        <span><?php echo htmlspecialchars(substr($book['title'], 0, 1)); ?></span>
+                    </div>
+                    <div class="book-info">
+                        <span class="book-year"><?php echo htmlspecialchars($book['year']); ?></span>
+                        <h3 class="book-title"><?php echo htmlspecialchars($book['title']); ?></h3>
+                        <p class="book-author"><?php echo htmlspecialchars($book['author']); ?></p>
+                        
+                        <div class="book-actions">
+                            <a href="/books/<?php echo $book['id']; ?>" class="btn btn-primary">Zobraziť detail</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         <?php endforeach; ?>
-    </ul>
+    </div>
 <?php endif; ?>
