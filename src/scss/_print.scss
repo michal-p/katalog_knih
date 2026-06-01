@@ -1,0 +1,63 @@
+// Print Styles
+@media print {
+  body {
+    background-color: white;
+  }
+  
+  // Hide UI elements not needed for print
+  .main-header, 
+  .main-footer, 
+  .btn, 
+  .book-actions {
+    display: none !important;
+  }
+
+  .main-content {
+    padding: 0;
+  }
+
+  // Display grid as a simple list for printing
+  .books-grid {
+    display: block; 
+  }
+
+  .book-card {
+    box-shadow: none;
+    border: none;
+    border-bottom: 1px solid #ccc;
+    border-radius: 0;
+    margin-bottom: 1rem;
+    
+    // Prevent the card from splitting across two pages
+    page-break-inside: avoid; 
+    
+    display: flex;
+    align-items: center;
+    
+    .book-cover-placeholder {
+      display: none;
+    }
+    
+    .book-info {
+      padding: 0.5rem 0;
+      
+      .book-title {
+        display: inline;
+        font-size: 1rem;
+      }
+      
+      .book-author {
+        display: inline;
+        margin-left: 0.5rem;
+        font-size: 1rem;
+      }
+      
+      .book-year {
+        background: transparent;
+        color: #000;
+        padding: 0;
+        margin-right: 0.5rem;
+      }
+    }
+  }
+}
