@@ -20,6 +20,9 @@ spl_autoload_register(function ($class) {
     }
 });
 
+// Load global helper functions
+require_once __DIR__ . '/../app/helpers.php';
+
 // 2. Initialize the application Router
 use App\Core\Router;
 use App\Controllers\BookController;
@@ -27,8 +30,9 @@ use App\Controllers\BookController;
 $router = new Router();
 
 // 3. Define the application routes
-// Route the home page ('/') to the index method of the BookController
-$router->get('/', [new BookController(), 'index']);
+// Memory optimization: Instead of passing "new BookController()", we pass its class name as string.
+// The Router will instantiate it only if the requested URL matches '/'.
+$router->get('/', [BookController::class, 'index']);
 
 // 4. Dispatch the request (match the URL and execute the code)
 $router->dispatch();

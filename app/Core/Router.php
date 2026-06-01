@@ -38,19 +38,38 @@ class Router
 
         // Check if a matching route exists for the given method and URI
         if (isset($this->routes[$method][$uri])) {
-            $action = $this->routes[$method][$uri];
-            
-            // If the action is a simple callback function, execute it directly
-            if (is_callable($action)) {
-                call_user_func($action);
-                return;
-            }
-
-            // Future logic for calling actual Controller classes (e.g., [BookController::class, 'index']) will go here
+            $this->executeAction($this->routes[$method][$uri]);
+            return;
         }
 
         // Return a 404 response if no matching route is found
         http_response_code(404);
         echo "<h1>404 - Page Not Found</h1><p>Sorry, the requested route does not exist.</p>";
+    }
+
+    /**
+     * Execute the matched route action (either a simple callback or a controller method).
+     *
+     * @param callable|array $action
+     */
+    protected function executeAction(callable|array $action): void
+    {
+        // If the action is a simple callback function (e.g., closure), execute it
+        if (is_callable($action)) {
+            call_user_func($action);
+            return;
+        }
+
+        // Handle controller class strings: [BookController::class, 'index']
+        if (is_array($action)) {
+            [$class, $controllerMethod] = $action;
+            if (class_exists($class)) {
+                $controller = new $class();
+                if (method_exists($controller, $controllerMethod)) {
+                    call_user_func([$controller, $controllerMethod]);
+                    return;
+                }
+            }
+        }
     }
 }

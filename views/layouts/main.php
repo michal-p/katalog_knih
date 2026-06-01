@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Katalóg e-kníh</title>
-    <!-- Modern Google Font (Inter) -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <!-- Our generated CSS file from Webpack -->
-    <link rel="stylesheet" href="/assets/css/app.css">
+    <link rel="stylesheet" href="<?php echo asset('assets/css/app.css'); ?>">
+    <!-- Our generated JS file from Webpack -->
+    <script src="<?php echo asset('assets/js/app.js'); ?>" defer></script>
 </head>
 <body>
     <div class="app-container">
@@ -17,9 +17,10 @@
                     <span class="icon">📚</span>
                     <h1>Katalóg e-kníh</h1>
                 </div>
+
                 <nav class="main-nav">
-                    <a href="/" class="nav-link active">Domov</a>
-                    <a href="/admin" class="nav-link">Administrácia</a>
+                    <a href="/" class="nav-link <?php echo activeLinkCssClass('/', true); ?>">Domov</a>
+                    <a href="/admin" class="nav-link <?php echo activeLinkCssClass('/admin'); ?>">Administrácia</a>
                 </nav>
             </div>
         </header>

@@ -1,0 +1,16 @@
+// Local Variable Font Definitions
+@font-face {
+  font-family: 'Inter';
+  src: url('../fonts/Inter-Variable-Roman.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap; // Renders fallback font immediately, then swaps to Inter once loaded (prevents invisible text)
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('../fonts/Inter-Variable-Italic.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap; // Renders fallback font immediately, then swaps to Inter once loaded (prevents invisible text)
+}
