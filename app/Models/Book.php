@@ -43,4 +43,22 @@ class Book
             'rating'     => $data['rating'] !== '' ? (int) $data['rating'] : null,
         ]);
     }
+
+    /**
+     * Get a specific book by its ID.
+     * 
+     * @param int $id The book ID
+     * @return array|null The book data as an array, or null if not found
+     */
+    public static function getById(int $id): ?array
+    {
+        $db = Database::getConnection();
+        
+        $stmt = $db->prepare("SELECT * FROM books WHERE id = :id LIMIT 1");
+        $stmt->execute(['id' => $id]);
+        
+        $book = $stmt->fetch();
+        
+        return $book ?: null;
+    }
 }

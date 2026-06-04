@@ -40,6 +40,7 @@ $router = new Router();
 // Memory optimization: Instead of passing "new BookController()", we pass its class name as string.
 // The Router will instantiate it only if the requested URL matches '/'.
 $router->get('/', [BookController::class, 'index']);
+$router->get('/books/{id}', [BookController::class, 'show']);
 
 // Admin authentication routes
 $router->get('/login', [AuthController::class, 'showLogin']);

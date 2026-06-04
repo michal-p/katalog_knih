@@ -242,3 +242,125 @@ textarea {
     }
   }
 }
+
+// Book Detail Component
+.book-detail-container {
+  max-width: 1000px;
+  margin: 0 auto;
+
+  .btn-outline {
+    margin-bottom: 1.5rem;
+    display: inline-flex;
+    
+    span {
+      margin-right: 0.5rem;
+    }
+  }
+}
+
+.book-detail-header {
+  margin-bottom: 2rem;
+
+  h2 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--text-main);
+    margin-bottom: 0.5rem;
+    line-height: 1.2;
+  }
+
+  p {
+    font-size: 1.25rem;
+    color: var(--text-muted);
+    
+    strong {
+      color: var(--text-main);
+    }
+  }
+}
+
+.book-detail-card {
+  background: var(--surface-color);
+  padding: 3rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  display: flex;
+  gap: 4rem;
+  flex-wrap: wrap;
+  border: 1px solid rgba(0, 0, 0, 0.02);
+}
+
+.book-cover-large {
+  flex: 0 0 280px;
+  height: 400px;
+  background: linear-gradient(135deg, #f3e7e9 0%, #e3eeff 99%, #e3eeff 100%);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
+
+  span {
+    font-size: 8rem;
+    font-weight: 900;
+    color: rgba(0, 0, 0, 0.05);
+    text-transform: uppercase;
+  }
+}
+
+.book-meta {
+  flex: 1;
+  min-width: 300px;
+
+  .meta-badges {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+    flex-wrap: wrap;
+  }
+
+  .badge {
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    &.badge-primary {
+      background: rgba(79, 70, 229, 0.1);
+      color: var(--primary-color);
+    }
+
+    &.badge-warning {
+      background: #FEF3C7;
+      color: #92400E;
+    }
+  }
+
+  .annotation {
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: var(--text-main);
+      border-bottom: 2px solid var(--border-color);
+      padding-bottom: 0.5rem;
+      display: inline-block;
+    }
+
+    p {
+      line-height: 1.8;
+      color: var(--text-main);
+      font-size: 1.1rem;
+      white-space: pre-wrap;
+      margin-top: 1rem;
+    }
+
+    .annotation-empty {
+      color: var(--text-muted);
+      font-style: italic;
+      margin-top: 1rem;
+    }
+  }
+}
