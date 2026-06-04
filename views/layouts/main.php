@@ -1,3 +1,4 @@
+<?php /** @var string $contentView */ ?>
 <!DOCTYPE html>
 <html lang="sk">
 <head>
@@ -20,7 +21,13 @@
 
                 <nav class="main-nav">
                     <a href="/" class="nav-link <?php echo activeLinkCssClass('/', true); ?>">Domov</a>
-                    <a href="/admin" class="nav-link <?php echo activeLinkCssClass('/admin'); ?>">Administrácia</a>
+                    
+                    <?php if (isAuthenticated()): ?>
+                        <a href="/admin/books" class="nav-link <?php echo activeLinkCssClass('/admin/books'); ?>">Správa kníh</a>
+                        <a href="/logout" class="nav-link">Odhlásiť sa (<?php echo htmlspecialchars($_SESSION['username'] ?? ''); ?>)</a>
+                    <?php else: ?>
+                        <a href="/login" class="nav-link <?php echo activeLinkCssClass('/login'); ?>">Administrácia</a>
+                    <?php endif; ?>
                 </nav>
             </div>
         </header>
