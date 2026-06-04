@@ -39,3 +39,25 @@ function asset(string $path): string
 
     return '/' . ltrim($path, '/') . $version;
 }
+
+/**
+ * Check if the user is currently authenticated as admin.
+ *
+ * @return bool
+ */
+function isAuthenticated(): bool
+{
+    return isset($_SESSION['user_id']);
+}
+
+/**
+ * Enforce authentication. Redirects to login page if user is not authenticated.
+ */
+function requireAuth(): void
+{
+    if (!isAuthenticated()) {
+        header('Location: /login');
+        exit;
+    }
+}
+

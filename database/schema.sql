@@ -16,3 +16,10 @@ CREATE TABLE IF NOT EXISTS `books` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `title_author` (`title`, `author`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Default admin account.
+-- Password is "admin123" hashed with PHP password_hash(..., PASSWORD_BCRYPT).
+-- To change it, generate a new hash: docker exec ebook_web php -r "echo password_hash('newpassword', PASSWORD_BCRYPT);"
+-- Then update this INSERT and re-run: docker exec -i ebook_db mysql -uroot -proot ebook_catalog < database/schema.sql
+INSERT IGNORE INTO `users` (`username`, `password`)
+VALUES ('admin', '$2y$10$ovVXaeXxYgYJriDa.e20c.SjwdnO5R168BZndKf5FjGpGYlNMZdCG');

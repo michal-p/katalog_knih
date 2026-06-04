@@ -1,5 +1,10 @@
 <?php
 
+// Start session globally for user authentication
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 // 1. Simple custom Autoloader to automatically require class files
 // This will later be replaced by Composer's autoloader.
 spl_autoload_register(function ($class) {
@@ -26,6 +31,8 @@ require_once __DIR__ . '/../app/helpers.php';
 // 2. Initialize the application Router
 use App\Core\Router;
 use App\Controllers\BookController;
+use App\Controllers\AuthController;
+use App\Controllers\AdminBookController;
 
 $router = new Router();
 
@@ -33,6 +40,16 @@ $router = new Router();
 // Memory optimization: Instead of passing "new BookController()", we pass its class name as string.
 // The Router will instantiate it only if the requested URL matches '/'.
 $router->get('/', [BookController::class, 'index']);
+
+// Admin authentication routes
+$router->get('/login', [AuthController::class, 'showLogin']);
+$router->post('/login', [AuthController::class, 'processLogin']);
+$router->get('/logout', [AuthController::class, 'logout']);
+
+// Admin books management routes
+$router->get('/admin/books', [AdminBookController::class, 'index']);
+$router->get('/admin/books/create', [AdminBookController::class, 'create']);
+$router->post('/admin/books', [AdminBookController::class, 'store']);
 
 // 4. Dispatch the request (match the URL and execute the code)
 $router->dispatch();
