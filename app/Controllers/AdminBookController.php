@@ -12,9 +12,6 @@ class AdminBookController
      */
     public function index(): void
     {
-        // Guard: only logged in admins
-        requireAuth();
-
         $books = Book::getAll();
 
         View::render('admin/books/index', [
@@ -27,8 +24,6 @@ class AdminBookController
      */
     public function create(): void
     {
-        requireAuth();
-
         View::render('admin/books/create');
     }
 
@@ -37,8 +32,6 @@ class AdminBookController
      */
     public function store(): void
     {
-        requireAuth();
-
         // 1. Sanitize and retrieve input
         $title      = trim($_POST['title'] ?? '');
         $author     = trim($_POST['author'] ?? '');

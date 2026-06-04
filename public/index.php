@@ -37,15 +37,15 @@ use App\Controllers\AdminBookController;
 $router = new Router();
 
 // 3. Define the application routes
-// Memory optimization: Instead of passing "new BookController()", we pass its class name as string.
-// The Router will instantiate it only if the requested URL matches '/'.
-$router->get('/', [BookController::class, 'index']);
-$router->get('/books/{id}', [BookController::class, 'show']);
+// All routes are protected by default (Default-deny architecture).
+// Routes that need to be publicly accessible must have `isPublic: true`.
+$router->get('/', [BookController::class, 'index'], isPublic: true);
+$router->get('/books/{id}', [BookController::class, 'show'], isPublic: true);
 
 // Admin authentication routes
-$router->get('/login', [AuthController::class, 'showLogin']);
-$router->post('/login', [AuthController::class, 'processLogin']);
-$router->get('/logout', [AuthController::class, 'logout']);
+$router->get('/login', [AuthController::class, 'showLogin'], isPublic: true);
+$router->post('/login', [AuthController::class, 'processLogin'], isPublic: true);
+$router->get('/logout', [AuthController::class, 'logout'], isPublic: true);
 
 // Admin books management routes
 $router->get('/admin/books', [AdminBookController::class, 'index']);

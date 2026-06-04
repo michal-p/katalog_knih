@@ -12,17 +12,33 @@ class Router
     /**
      * Register a GET route (e.g., displaying a page or a list of books).
      */
-    public function get(string $uri, callable|array $action): void
+    public function get(string $uri, callable|array $action, bool $isPublic = false): void
     {
-        $this->routes['GET'][$uri] = $action;
+        $this->addRoute('GET', $uri, $action, $isPublic);
     }
 
     /**
      * Register a POST route (e.g., submitting a form to add a new book).
      */
-    public function post(string $uri, callable|array $action): void
+    public function post(string $uri, callable|array $action, bool $isPublic = false): void
     {
-        $this->routes['POST'][$uri] = $action;
+        $this->addRoute('POST', $uri, $action, $isPublic);
+    }
+
+    /**
+     * Helper method to add a route to the internal route collection.
+     *
+     * @param string $method The HTTP method ('GET' or 'POST')
+     * @param string $uri The URI pattern (e.g., '/books')
+     * @param callable|array $action The action to execute
+     * @param bool $isPublic Whether the route requires authentication (default: false)
+     */
+    protected function addRoute(string $method, string $uri, callable|array $action, bool $isPublic): void
+    {
+        $this->routes[$method][$uri] = [
+            'action' => $action,
+            'isPublic' => $isPublic
+        ];
     }
 
     /**
@@ -38,7 +54,14 @@ class Router
 
         // 1. Direct exact match (e.g., /admin/books)
         if (isset($this->routes[$method][$uri])) {
-            $this->executeAction($this->routes[$method][$uri]);
+            $routeData = $this->routes[$method][$uri];
+            
+            // Secure by default: check authentication if the route is not explicitly public
+            if (!$routeData['isPublic']) {
+                requireAuth();
+            }
+            
+            $this->executeAction($routeData['action']);
             return;
         }
 
@@ -46,7 +69,6 @@ class Router
         if ($this->matchDynamicRoute($uri, $method)) {
             return;
         }
-
         // Return a 404 response if no matching route is found
         http_response_code(404);
         echo "<h1>404 - Page Not Found</h1><p>Sorry, the requested route does not exist.</p>";
@@ -72,16 +94,23 @@ class Router
             return false;
         }
 
-        foreach ($this->routes[$method] as $routePattern => $action) {
+        foreach ($this->routes[$method] as $routePattern => $routeData) {
             // Convert placeholders like {id} into regular expression capture groups: ([^/]+)
             $regex = preg_replace('/\{([a-zA-Z0-9_]+)\}/', '([^/]+)', $routePattern);
             
             if (preg_match('#^' . $regex . '$#', $uri, $matches)) {
+                // 1. Verify security first (Fail-fast principle)
+                // Secure by default: check authentication if the route is not explicitly public
+                if (!$routeData['isPublic']) {
+                    requireAuth();
+                }
+
+                // 2. Only after access is confirmed, process data for the Controller
                 // Remove the full string match, keeping only the captured parameters
                 array_shift($matches);
                 
                 // Execute the action and pass the captured parameters
-                $this->executeAction($action, $matches);
+                $this->executeAction($routeData['action'], $matches);
                 return true;
             }
         }
