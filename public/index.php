@@ -33,6 +33,7 @@ use App\Core\Router;
 use App\Controllers\BookController;
 use App\Controllers\AuthController;
 use App\Controllers\AdminBookController;
+use App\Controllers\ImportController;
 
 $router = new Router();
 
@@ -51,6 +52,7 @@ $router->get('/logout', [AuthController::class, 'logout'], isPublic: true);
 $router->get('/admin/books', [AdminBookController::class, 'index']);
 $router->get('/admin/books/create', [AdminBookController::class, 'create']);
 $router->post('/admin/books', [AdminBookController::class, 'store']);
+$router->post('/admin/books/import', [ImportController::class, 'import']);
 
 // 4. Dispatch the request (match the URL and execute the code)
 $router->dispatch();
