@@ -86,7 +86,9 @@ class AdminBookController
             if ($e->errorInfo[1] === 1062) {
                 $errors[] = 'Táto kniha od tohto autora už v databáze existuje.';
             } else {
-                $errors[] = 'Nastala databázová chyba: ' . $e->getMessage();
+                // Log the full error details for the developer (visible via: docker logs -f ebook_web)
+                error_log("Database error in AdminBookController::store(): " . $e->getMessage());
+                $errors[] = 'Nastala neočakávaná chyba pri ukladaní. Skúste to znova neskôr.';
             }
         }
 

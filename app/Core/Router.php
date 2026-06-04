@@ -69,6 +69,7 @@ class Router
         if ($this->matchDynamicRoute($uri, $method)) {
             return;
         }
+
         // Return a 404 response if no matching route is found
         http_response_code(404);
         echo "<h1>404 - Page Not Found</h1><p>Sorry, the requested route does not exist.</p>";
