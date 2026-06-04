@@ -1,3 +1,4 @@
+<?php /** @var string $contentView */ ?>
 <!DOCTYPE html>
 <html lang="sk">
 <head>
