@@ -20,6 +20,7 @@
 
     <!-- The form uses POST to safely send data. Note HTML5 validation like 'required' and 'min/max' -->
     <form action="/admin/books" method="POST" class="book-form">
+        <?= \App\Helpers\View::csrfField() ?>
         <div class="form-row">
             <div class="form-group">
                 <label for="title">Názov knihy *</label>

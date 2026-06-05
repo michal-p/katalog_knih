@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Core\View;
 use App\Models\User;
+use App\Core\Security;
 
 /**
  * Handles user authentication: login form display, credential verification, and logout.
@@ -34,6 +35,9 @@ class AuthController
             header('Location: /admin/books');
             exit;
         }
+
+        // CSRF Protection validation
+        Security::verifyCsrf();
 
         $username = trim($_POST['username'] ?? '');
         $password = $_POST['password'] ?? '';

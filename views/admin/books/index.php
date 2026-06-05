@@ -2,6 +2,7 @@
     <h2>Správa kníh</h2>
     <div class="admin-actions">
         <form action="/admin/books/import" method="POST">
+            <?= \App\Helpers\View::csrfField() ?>
             <button type="submit" class="btn btn-outline">
                 📥 Importovať z JSON
             </button>

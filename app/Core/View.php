@@ -52,6 +52,7 @@ class View
     public static function renderError(int $code): void
     {
         $errors = [
+            403 => ['title' => 'Prístup odmietnutý',    'message' => 'Neplatný CSRF token. Z bezpečnostných dôvodov bola požiadavka zamietnutá.'],
             404 => ['title' => 'Stránka sa nenašla',    'message' => 'Ľutujeme, ale stránka, ktorú hľadáte, neexistuje alebo bola presunutá.'],
             500 => ['title' => 'Chyba servera',         'message' => 'Nastala neočakávaná chyba. Skúste to znova neskôr.'],
         ];

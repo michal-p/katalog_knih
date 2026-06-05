@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Core\View;
 use App\Models\Book;
+use App\Core\Security;
 
 /**
  * Handles bulk import of books from the JSON seed file (database/seed/books.json).
@@ -20,6 +21,9 @@ class ImportController
      */
     public function import(): void
     {
+        // CSRF Protection validation
+        Security::verifyCsrf();
+
         // 1. Check if the seed file exists
         if (!file_exists(self::SEED_FILE)) {
             header('Location: /admin/books?import_error=' . urlencode('Súbor books.json nebol nájdený.'));

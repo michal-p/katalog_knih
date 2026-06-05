@@ -11,8 +11,10 @@ spl_autoload_register(function ($class) {
     // Prefix mapping: App\Core\Router becomes /app/Core/Router.php
     $prefix = 'App\\';
     $base_dir = __DIR__ . '/../app/';
-
     $len = strlen($prefix);
+
+    // Only process classes that start with our namespace prefix.
+    // If the class belongs to another library, delegate loading to other registered autoloaders.
     if (strncmp($prefix, $class, $len) !== 0) {
         return; 
     }
@@ -24,9 +26,6 @@ spl_autoload_register(function ($class) {
         require $file;
     }
 });
-
-// Load global helper functions
-require_once __DIR__ . '/../app/helpers.php';
 
 // 2. Initialize the application Router
 use App\Core\Router;

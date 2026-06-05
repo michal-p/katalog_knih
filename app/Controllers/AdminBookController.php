@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Core\View;
 use App\Models\Book;
+use App\Core\Security;
 
 /**
  * Handles admin CRUD operations for books: listing, creating, and storing.
@@ -35,6 +36,9 @@ class AdminBookController
      */
     public function store(): void
     {
+        // CSRF Protection validation
+        Security::verifyCsrf();
+
         // 1. Sanitize and retrieve input
         $title      = trim($_POST['title'] ?? '');
         $author     = trim($_POST['author'] ?? '');
