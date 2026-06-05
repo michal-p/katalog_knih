@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Core\View;
 use App\Models\User;
 use App\Core\Security;
+use App\Core\Auth;
 
 /**
  * Handles user authentication: login form display, credential verification, and logout.
@@ -17,7 +18,7 @@ class AuthController
     public function showLogin(): void
     {
         // If already logged in, redirect to admin area
-        if (isset($_SESSION['user_id'])) {
+        if (Auth::check()) {
             header('Location: /admin/books');
             exit;
         }
@@ -31,7 +32,7 @@ class AuthController
     public function processLogin(): void
     {
         // If already logged in, redirect to admin area
-        if (isset($_SESSION['user_id'])) {
+        if (Auth::check()) {
             header('Location: /admin/books');
             exit;
         }
@@ -52,12 +53,8 @@ class AuthController
 
             // Verify username and bcrypt hashed password
             if ($user && password_verify($password, $user['password'])) {
-                // Regenerate session ID to prevent Session Fixation attacks
-                session_regenerate_id(true);
-
-                // Set session variables
-                $_SESSION['user_id'] = $user['id'];
-                $_SESSION['username'] = $user['username'];
+                // Log the user in
+                Auth::login($user);
 
                 // Redirect to admin dashboard
                 header('Location: /admin/books');
@@ -81,25 +78,8 @@ class AuthController
      */
     public function logout(): void
     {
-        // Clear all session variables
-        $_SESSION = [];
-
-        // Destroy the session cookie in the browser
-        if (ini_get("session.use_cookies")) {
-            $params = session_get_cookie_params();
-            setcookie(
-                session_name(),
-                '',
-                time() - 42000,
-                $params["path"],
-                $params["domain"],
-                $params["secure"],
-                $params["httponly"]
-            );
-        }
-
-        // Destroy the session on the server
-        session_destroy();
+        // Log the user out
+        Auth::logout();
 
         // Redirect to login page
         header('Location: /login');
