@@ -29,7 +29,15 @@ Aplikácia následne pobeží na [http://localhost:8080](http://localhost:8080).
 Databáza pobeží na porte `3307` a automaticky sa do nej importuje schéma z `database/schema.sql`.
 
 ## Prihlasovacie údaje (Predvolené)
-*Bude doplnené neskôr*
+Do administrácie sa dostanete cez `/login`:
+- **Používateľské meno:** `admin`
+- **Heslo:** `admin123`
 
 ## Import kníh
 Pre automatický import môžete po prihlásení v administrácii nahrať dáta priamo z ukážkového súboru umiestneného v `database/seed/books.json`.
+
+## Testovanie (PHPUnit)
+Testy spustíte pomocou nástroja PHPUnit, ktorý je nainštalovaný cez Composer priamo v Docker kontajneri. Pre spustenie testov zadajte do terminálu:
+```bash
+docker exec -it ebook_web vendor/bin/phpunit
+```
