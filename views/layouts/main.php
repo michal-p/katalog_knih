@@ -38,7 +38,7 @@
         </main>
 
         <footer class="main-footer">
-            <p>&copy; <?php echo date('Y'); ?> E-book Catalog. Zkušební úkol.</p>
+            <p>&copy; <?php echo date('Y'); ?> Katalóg e-kníh. Skúšobný projekt.</p>
         </footer>
     </div>
 </body>

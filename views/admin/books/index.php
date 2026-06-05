@@ -1,7 +1,7 @@
 <div class="admin-header">
     <h2>Správa kníh</h2>
     <div class="admin-actions">
-        <form action="/admin/books/import" method="POST" style="display: inline;">
+        <form action="/admin/books/import" method="POST">
             <button type="submit" class="btn btn-outline">
                 📥 Importovať z JSON
             </button>

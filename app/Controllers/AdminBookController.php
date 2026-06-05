@@ -5,6 +5,9 @@ namespace App\Controllers;
 use App\Core\View;
 use App\Models\Book;
 
+/**
+ * Handles admin CRUD operations for books: listing, creating, and storing.
+ */
 class AdminBookController
 {
     /**

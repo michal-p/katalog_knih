@@ -5,6 +5,9 @@ namespace App\Controllers;
 use App\Core\View;
 use App\Models\Book;
 
+/**
+ * Handles bulk import of books from the JSON seed file (database/seed/books.json).
+ */
 class ImportController
 {
     /**
@@ -25,6 +28,12 @@ class ImportController
 
         // 2. Read and decode the JSON file
         $json = file_get_contents(self::SEED_FILE);
+
+        if ($json === false) {
+            header('Location: /admin/books?import_error=' . urlencode('Nepodarilo sa prečítať súbor books.json.'));
+            exit;
+        }
+
         $books = json_decode($json, true);
 
         // json_decode returns null if the JSON is malformed

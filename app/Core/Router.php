@@ -2,10 +2,16 @@
 
 namespace App\Core;
 
+/**
+ * Simple HTTP router with support for static and dynamic routes.
+ * Implements default-deny authentication: all routes require login unless marked as public.
+ */
 class Router
 {
     /**
      * List of all registered routes and their associated actions/controllers.
+     *
+     * @var array<string, array<string, array{action: callable|array, isPublic: bool}>>
      */
     protected array $routes = [];
 

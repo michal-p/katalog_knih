@@ -2,6 +2,10 @@
 
 namespace App\Core;
 
+/**
+ * Simple template rendering engine.
+ * Supports layouts with content injection and variable extraction.
+ */
 class View
 {
     /**
@@ -20,7 +24,9 @@ class View
         $contentView = __DIR__ . '/../../views/' . $template . '.php';
 
         if (!file_exists($contentView)) {
-            die("View template not found: [{$template}]");
+            error_log("View template not found: [{$template}]");
+            http_response_code(500);
+            die('Požadovaná stránka sa nenašla.');
         }
 
         // Build the absolute path to the layout wrapper

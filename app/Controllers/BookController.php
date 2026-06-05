@@ -2,9 +2,12 @@
 
 namespace App\Controllers;
 
-use App\Models\Book;
 use App\Core\View;
+use App\Models\Book;
 
+/**
+ * Handles public-facing book pages: listing all books and showing individual book details.
+ */
 class BookController
 {
     /**

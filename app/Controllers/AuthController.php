@@ -2,10 +2,12 @@
 
 namespace App\Controllers;
 
-use App\Core\Database;
 use App\Core\View;
-use PDO;
+use App\Models\User;
 
+/**
+ * Handles user authentication: login form display, credential verification, and logout.
+ */
 class AuthController
 {
     /**
@@ -39,13 +41,10 @@ class AuthController
 
         // Basic server-side validation
         if (empty($username) || empty($password)) {
-            $errors[] = 'Please enter both username and password.';
+            $errors[] = 'Zadajte používateľské meno aj heslo.';
         } else {
-            // Fetch user from DB
-            $db = Database::getConnection();
-            $stmt = $db->prepare('SELECT * FROM users WHERE username = :username LIMIT 1');
-            $stmt->execute(['username' => $username]);
-            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+            // Fetch user from DB via the User model (MVC pattern)
+            $user = User::findByUsername($username);
 
             // Verify username and bcrypt hashed password
             if ($user && password_verify($password, $user['password'])) {
@@ -60,7 +59,7 @@ class AuthController
                 header('Location: /admin/books');
                 exit;
             } else {
-                $errors[] = 'Invalid username or password.';
+                $errors[] = 'Nesprávne používateľské meno alebo heslo.';
             }
         }
 
