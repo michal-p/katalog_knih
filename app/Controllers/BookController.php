@@ -33,9 +33,7 @@ class BookController
         $book = Book::getById((int) $id);
 
         if (!$book) {
-            http_response_code(404);
-            echo "<h1>404 - Kniha sa nenašla</h1><p>Ľutujeme, ale hľadaná kniha neexistuje.</p>";
-            exit;
+            View::renderError(404);
         }
 
         View::render('books/show', [

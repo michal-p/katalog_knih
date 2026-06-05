@@ -77,8 +77,7 @@ class Router
         }
 
         // Return a 404 response if no matching route is found
-        http_response_code(404);
-        echo "<h1>404 - Page Not Found</h1><p>Sorry, the requested route does not exist.</p>";
+        View::renderError(404);
     }
 
     /**
