@@ -11,8 +11,10 @@ spl_autoload_register(function ($class) {
     // Prefix mapping: App\Core\Router becomes /app/Core/Router.php
     $prefix = 'App\\';
     $base_dir = __DIR__ . '/../app/';
-
     $len = strlen($prefix);
+
+    // Only process classes that start with our namespace prefix.
+    // If the class belongs to another library, delegate loading to other registered autoloaders.
     if (strncmp($prefix, $class, $len) !== 0) {
         return; 
     }
@@ -25,14 +27,12 @@ spl_autoload_register(function ($class) {
     }
 });
 
-// Load global helper functions
-require_once __DIR__ . '/../app/helpers.php';
-
 // 2. Initialize the application Router
 use App\Core\Router;
 use App\Controllers\BookController;
 use App\Controllers\AuthController;
 use App\Controllers\AdminBookController;
+use App\Controllers\ImportController;
 
 $router = new Router();
 
@@ -51,6 +51,7 @@ $router->get('/logout', [AuthController::class, 'logout'], isPublic: true);
 $router->get('/admin/books', [AdminBookController::class, 'index']);
 $router->get('/admin/books/create', [AdminBookController::class, 'create']);
 $router->post('/admin/books', [AdminBookController::class, 'store']);
+$router->post('/admin/books/import', [ImportController::class, 'import']);
 
 // 4. Dispatch the request (match the URL and execute the code)
 $router->dispatch();

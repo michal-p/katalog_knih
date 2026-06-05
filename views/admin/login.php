@@ -14,6 +14,7 @@
         <?php endif; ?>
 
         <form action="/login" method="POST" class="login-form">
+            <?= \App\Helpers\View::csrfField() ?>
             <div class="form-group">
                 <label for="username">Používateľské meno</label>
                 <div class="input-wrapper">

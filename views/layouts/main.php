@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Katalóg e-kníh</title>
     <!-- Our generated CSS file from Webpack -->
-    <link rel="stylesheet" href="<?php echo asset('assets/css/app.css'); ?>">
+    <link rel="stylesheet" href="<?php echo \App\Helpers\View::asset('assets/css/app.css'); ?>">
     <!-- Our generated JS file from Webpack -->
-    <script src="<?php echo asset('assets/js/app.js'); ?>" defer></script>
+    <script src="<?php echo \App\Helpers\View::asset('assets/js/app.js'); ?>" defer></script>
 </head>
 <body>
     <div class="app-container">
@@ -20,13 +20,13 @@
                 </div>
 
                 <nav class="main-nav">
-                    <a href="/" class="nav-link <?php echo activeLinkCssClass('/', true); ?>">Domov</a>
+                    <a href="/" class="nav-link <?php echo \App\Helpers\View::activeLinkCssClass('/', true); ?>">Domov</a>
                     
-                    <?php if (isAuthenticated()): ?>
-                        <a href="/admin/books" class="nav-link <?php echo activeLinkCssClass('/admin/books'); ?>">Správa kníh</a>
+                    <?php if (\App\Core\Auth::check()): ?>
+                        <a href="/admin/books" class="nav-link <?php echo \App\Helpers\View::activeLinkCssClass('/admin/books'); ?>">Správa kníh</a>
                         <a href="/logout" class="nav-link">Odhlásiť sa (<?php echo htmlspecialchars($_SESSION['username'] ?? ''); ?>)</a>
                     <?php else: ?>
-                        <a href="/login" class="nav-link <?php echo activeLinkCssClass('/login'); ?>">Administrácia</a>
+                        <a href="/login" class="nav-link <?php echo \App\Helpers\View::activeLinkCssClass('/login'); ?>">Prihlásiť sa</a>
                     <?php endif; ?>
                 </nav>
             </div>
@@ -38,7 +38,7 @@
         </main>
 
         <footer class="main-footer">
-            <p>&copy; <?php echo date('Y'); ?> E-book Catalog. Zkušební úkol.</p>
+            <p>&copy; <?php echo date('Y'); ?> Katalóg e-kníh. Skúšobný projekt.</p>
         </footer>
     </div>
 </body>

@@ -5,6 +5,10 @@ namespace App\Core;
 use PDO;
 use PDOException;
 
+/**
+ * Singleton database connection manager.
+ * Ensures only one PDO connection exists per request using the Singleton pattern.
+ */
 class Database
 {
     /**
@@ -44,8 +48,10 @@ class Database
                     PDO::ATTR_EMULATE_PREPARES => false, // Use real prepared statements for security against SQL Injection
                 ]);
             } catch (PDOException $e) {
-                // Terminate application if connection fails
-                die("Database connection failed: " . $e->getMessage());
+                // Log the real error for the developer (visible via: docker logs -f ebook_web)
+                error_log('Database connection failed: ' . $e->getMessage());
+                http_response_code(500);
+                die('Aplikácia sa nemôže pripojiť k databáze. Kontaktujte administrátora.');
             }
         }
 

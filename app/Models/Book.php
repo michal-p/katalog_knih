@@ -4,6 +4,9 @@ namespace App\Models;
 
 use App\Core\Database;
 
+/**
+ * Model representing the books table. Provides static methods for CRUD operations.
+ */
 class Book
 {
     /**

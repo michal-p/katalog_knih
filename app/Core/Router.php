@@ -2,10 +2,18 @@
 
 namespace App\Core;
 
+use App\Core\Auth;
+
+/**
+ * Simple HTTP router with support for static and dynamic routes.
+ * Implements default-deny authentication: all routes require login unless marked as public.
+ */
 class Router
 {
     /**
      * List of all registered routes and their associated actions/controllers.
+     *
+     * @var array<string, array<string, array{action: callable|array, isPublic: bool}>>
      */
     protected array $routes = [];
 
@@ -58,7 +66,7 @@ class Router
             
             // Secure by default: check authentication if the route is not explicitly public
             if (!$routeData['isPublic']) {
-                requireAuth();
+                Auth::require();
             }
             
             $this->executeAction($routeData['action']);
@@ -71,8 +79,7 @@ class Router
         }
 
         // Return a 404 response if no matching route is found
-        http_response_code(404);
-        echo "<h1>404 - Page Not Found</h1><p>Sorry, the requested route does not exist.</p>";
+        View::renderError(404);
     }
 
     /**
@@ -103,7 +110,7 @@ class Router
                 // 1. Verify security first (Fail-fast principle)
                 // Secure by default: check authentication if the route is not explicitly public
                 if (!$routeData['isPublic']) {
-                    requireAuth();
+                    Auth::require();
                 }
 
                 // 2. Only after access is confirmed, process data for the Controller

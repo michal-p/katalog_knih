@@ -1,6 +1,12 @@
 <div class="admin-header">
     <h2>Správa kníh</h2>
     <div class="admin-actions">
+        <form action="/admin/books/import" method="POST">
+            <?= \App\Helpers\View::csrfField() ?>
+            <button type="submit" class="btn btn-outline">
+                📥 Importovať z JSON
+            </button>
+        </form>
         <a href="/admin/books/create" class="btn btn-primary">
             <span class="btn-icon">+</span> Pridať novú knihu
         </a>
@@ -11,6 +17,31 @@
     <div class="alert alert-success">
         Úspešne uložené! Operácia prebehla v poriadku.
     </div>
+<?php endif; ?>
+
+<?php if (isset($_GET['imported'])): ?>
+    <div class="alert alert-success">
+        Import dokončený: <strong><?php echo (int) $_GET['imported']; ?></strong> kníh importovaných,
+        <strong><?php echo (int) ($_GET['skipped'] ?? 0); ?></strong> preskočených (už existujú alebo chybné údaje).
+    </div>
+<?php endif; ?>
+
+<?php if (isset($_GET['import_error'])): ?>
+    <div class="alert alert-danger">
+        <?php echo htmlspecialchars($_GET['import_error']); ?>
+    </div>
+<?php endif; ?>
+
+<?php if (isset($_SESSION['import_errors'])): ?>
+    <div class="alert alert-danger">
+        <strong>Niektoré záznamy sa nepodarilo importovať:</strong>
+        <ul class="error-list" style="margin-top: 0.5rem;">
+            <?php foreach ($_SESSION['import_errors'] as $error): ?>
+                <li><?php echo htmlspecialchars($error); ?></li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+    <?php unset($_SESSION['import_errors']); ?>
 <?php endif; ?>
 
 <div class="admin-table-container">
