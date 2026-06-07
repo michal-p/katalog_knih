@@ -1,43 +1,47 @@
-# Katalóg e-kníh
+# E-Book Catalog
 
-Jednoduchá webová aplikácia pre správu katalógu e-kníh. Vyvinutá v čistom PHP 8 (OOP) bez frameworku, s MySQL databázou a Docker prostredím.
+A simple web application for managing an e-book catalog. Built using clean PHP 8 (OOP) without frameworks, a MySQL database, and Docker environment.
 
-## Požiadavky
-- Docker a Docker Compose
-- Node.js a NPM (pre Webpack kompiláciu)
+## Requirements
+- Docker and Docker Compose
+- Node.js & NPM (for Webpack compilation)
 
-## Inštalácia a spustenie
+## Installation & Setup
 
-1. **Klonovanie repozitára**
+1. **Clone the repository**
    ```bash
-   git clone <url_repozitara>
+   git clone <repository_url>
    cd katalog_knih
    ```
 
-2. **Inštalácia frontend závislostí**
+2. **Install frontend dependencies**
    ```bash
    npm install
    npm run build
    ```
 
-3. **Spustenie prostredia cez Docker**
+3. **Start the environment via Docker**
    ```bash
    docker-compose up -d
    ```
 
-Aplikácia následne pobeží na [http://localhost:8080](http://localhost:8080).
-Databáza pobeží na porte `3307` a automaticky sa do nej importuje schéma z `database/schema.sql`.
+The application will be available at [http://localhost:8080](http://localhost:8080).
+The database runs on port `3307` and automatically imports the schema from `database/schema.sql`.
 
-## Prihlasovacie údaje (Predvolené)
-Do administrácie sa dostanete cez `/login`:
-- **Používateľské meno:** `admin`
-- **Heslo:** `admin123`
+## Admin Credentials (Default)
+To access the admin panel, navigate to `/login`:
+- **Username:** `admin`
+- **Password:** `admin123`
 
-## Import kníh
-Pre automatický import môžete po prihlásení v administrácii nahrať dáta priamo z ukážkového súboru umiestneného v `database/seed/books.json`.
+## Importing Books
+For an automatic import of sample data, log into the admin panel and upload the JSON file located at `database/seed/books.json`.
 
-## Testovanie (PHPUnit)
-Testy spustíte pomocou nástroja PHPUnit, ktorý je nainštalovaný cez Composer priamo v Docker kontajneri. Pre spustenie testov zadajte do terminálu:
+## 🧪 Testing (PHPUnit)
+The application includes automated unit tests to verify routing (Router), security (CSRF), authentication (Auth), and template helper functions.
+
+All tests are located in the `tests/` directory. For detailed instructions and testing guides, refer to the **[Testing Guide (docs/testing.md)](docs/testing.md)**.
+
+### Run all tests:
 ```bash
 docker exec -it ebook_web vendor/bin/phpunit
 ```
