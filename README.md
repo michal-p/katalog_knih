@@ -32,6 +32,12 @@ A simple web application for managing an e-book catalog. Built using clean PHP 8
    docker-compose up -d
    ```
 
+5. **Install PHP dependencies (Composer)**
+   Install PHPUnit and generate the PSR-4 autoloader inside the running container:
+   ```bash
+   docker exec -it ebook_web composer install
+   ```
+
 The application will be available at [http://localhost:8080](http://localhost:8080).
 The database runs on port `3307` and automatically imports the schema from `database/schema.sql`.
 
