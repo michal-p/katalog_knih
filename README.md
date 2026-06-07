@@ -14,13 +14,20 @@ A simple web application for managing an e-book catalog. Built using clean PHP 8
    cd katalog_knih
    ```
 
-2. **Install frontend dependencies**
+2. **Configure environment variables**
+   Create a `.env` file from the provided template:
+   ```bash
+   cp .env.example .env
+   ```
+   *(The default settings inside `.env.example` are preconfigured and work out of the box with Docker. You can change them if needed).*
+
+3. **Install frontend dependencies**
    ```bash
    npm install
    npm run build
    ```
 
-3. **Start the environment via Docker**
+4. **Start the environment via Docker**
    ```bash
    docker-compose up -d
    ```
