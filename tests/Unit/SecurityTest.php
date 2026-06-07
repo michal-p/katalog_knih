@@ -16,6 +16,13 @@ class SecurityTest extends TestCase
         $_SESSION = [];
     }
 
+    protected function tearDown(): void
+    {
+        unset($_SERVER['REQUEST_METHOD']);
+        unset($_POST['csrf_token']);
+        $_SESSION = [];
+    }
+
     public function testCsrfTokenIsGeneratedAndStoredInSession()
     {
         $token = Security::csrfToken();
@@ -32,8 +39,21 @@ class SecurityTest extends TestCase
         $token = Security::csrfToken();
         $_POST['csrf_token'] = $token;
 
-        // If it doesn't exit, the test passes
+        // If it doesn't throw an exception, the test passes
         Security::verifyCsrf();
         $this->assertTrue(true);
+    }
+
+    public function testVerifyCsrfThrowsExceptionForInvalidToken()
+    {
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $_SESSION['csrf_token'] = 'valid_token_123';
+        $_POST['csrf_token'] = 'invalid_token_456';
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionCode(403);
+        $this->expectExceptionMessage('Invalid CSRF token');
+
+        Security::verifyCsrf();
     }
 }

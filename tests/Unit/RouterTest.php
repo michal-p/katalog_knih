@@ -40,6 +40,36 @@ class RouterTest extends TestCase
         $this->assertFalse($routes['POST']['/submit']['isPublic']);
     }
 
+    public function testDispatchExecutesAction()
+    {
+        $_SERVER['REQUEST_URI'] = '/test-route';
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        
+        $executed = false;
+        $this->router->get('/test-route', function() use (&$executed) {
+            $executed = true;
+        }, true); // true = isPublic
+
+        $this->router->dispatch();
+        
+        $this->assertTrue($executed, 'Router should execute the action for the matched route.');
+    }
+
+    public function testDispatchMatchesDynamicRouteAndPassesParameters()
+    {
+        $_SERVER['REQUEST_URI'] = '/item/42/edit';
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        
+        $capturedId = null;
+        $this->router->get('/item/{id}/edit', function($id) use (&$capturedId) {
+            $capturedId = $id;
+        }, true); // isPublic = true
+
+        $this->router->dispatch();
+        
+        $this->assertEquals('42', $capturedId, 'Router should extract dynamic parameters and pass them to the action.');
+    }
+
     /**
      * Helper method to retrieve the protected $routes property from Router.
      */
@@ -47,7 +77,6 @@ class RouterTest extends TestCase
     {
         $reflection = new \ReflectionClass(Router::class);
         $property = $reflection->getProperty('routes');
-        $property->setAccessible(true);
         return $property->getValue($this->router);
     }
 }

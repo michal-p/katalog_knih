@@ -35,4 +35,13 @@ $router->post('/admin/books', [AdminBookController::class, 'store']);
 $router->post('/admin/books/import', [ImportController::class, 'import']);
 
 // 4. Dispatch the request (match the URL and execute the code)
-$router->dispatch();
+try {
+    $router->dispatch();
+} catch (\Exception $e) {
+    if ($e->getCode() === 403) {
+        \App\Core\View::renderError(403);
+    } else {
+        error_log($e->getMessage());
+        \App\Core\View::renderError(500);
+    }
+}

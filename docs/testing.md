@@ -25,9 +25,8 @@ We have implemented unit tests that verify the correctness of isolated parts of 
 ## ⚙️ 2. Test Configuration (`phpunit.xml`)
 
 PHPUnit settings can be found in the root configuration file [phpunit.xml](file:///Users/michalpuchy/Workspace/katalog_knih/phpunit.xml). Key configurations include:
-- Defining the test directory `<directory>tests</directory>`.
+- Defining the test directory `<directory>tests/Unit</directory>`.
 - Enabling colored output (`colors="true"`).
-- Halting on the first failure/error (`stopOnFailure="false"`).
 - Setting up the test cache directory (`.phpunit.cache`).
 
 ---
@@ -63,5 +62,5 @@ PHPUnit runs as a single CLI process. If a tested method manipulates sessions (`
 - **Solution:** Add the `/** @runInSeparateProcess */` annotation above test methods that interact with sessions or headers (used in `AuthTest.php`). This tells PHPUnit to run that specific test in a separate PHP process.
 
 ### B. Execution Interruption via `exit` or `die`
-If the tested code calls `exit;` or `die;` directly upon failure (such as when a CSRF token verification fails), it will immediately terminate the entire PHPUnit process, causing the test to fail silently without output.
-- **Solution:** We test only the happy path for these methods (e.g., `Security::verifyCsrf`). If we wanted to test the failure paths, the production code would need to throw an `Exception` instead of calling `exit;`, which we could then catch in the test.
+If tested code calls `exit;` or `die;` directly upon failure, it will immediately terminate the entire PHPUnit process, causing the test to fail silently without output.
+- **Solution:** We refactored our security methods (e.g., `Security::verifyCsrf`) to throw an `Exception` instead of calling `exit;` or `View::renderError(403)` directly. The exception is then caught in the global `index.php` try-catch block for production execution, and tested gracefully using `$this->expectException()` in PHPUnit.

@@ -30,7 +30,7 @@ class ViewHelperTest extends TestCase
         $html = View::csrfField();
 
         $this->assertStringContainsString('<input type="hidden" name="csrf_token"', $html);
-        $this->assertStringContainsString('value="', $html);
+        $this->assertStringContainsString('value="' . $_SESSION['csrf_token'] . '"', $html);
         
         // Ensure that the token was also saved to the session
         $this->assertArrayHasKey('csrf_token', $_SESSION);

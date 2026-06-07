@@ -43,7 +43,12 @@ class AuthTest extends TestCase
             'username' => 'testuser'
         ];
 
+        $oldSessionId = session_id();
+
         Auth::login($user);
+
+        $newSessionId = session_id();
+        $this->assertNotEquals($oldSessionId, $newSessionId, 'session_regenerate_id() should have been called to prevent session fixation.');
 
         $this->assertEquals(123, $_SESSION['user_id']);
         $this->assertEquals('testuser', $_SESSION['username']);
@@ -62,5 +67,9 @@ class AuthTest extends TestCase
         Auth::logout();
 
         $this->assertEmpty($_SESSION, 'All session variables should be cleared after logout.');
+        $this->assertEquals(PHP_SESSION_NONE, session_status(), 'Session should be closed (PHP_SESSION_NONE) after session_destroy() is called.');
+        
+        // Ensure that headers were sent for the cookie destruction (PHPUnit can check this if we suppress the error)
+        // Since we are in CLI, headers might not be actually sent, but we can verify the session is empty.
     }
 }
