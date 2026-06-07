@@ -5,27 +5,8 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// 1. Simple custom Autoloader to automatically require class files
-// This will later be replaced by Composer's autoloader.
-spl_autoload_register(function ($class) {
-    // Prefix mapping: App\Core\Router becomes /app/Core/Router.php
-    $prefix = 'App\\';
-    $base_dir = __DIR__ . '/../app/';
-    $len = strlen($prefix);
-
-    // Only process classes that start with our namespace prefix.
-    // If the class belongs to another library, delegate loading to other registered autoloaders.
-    if (strncmp($prefix, $class, $len) !== 0) {
-        return; 
-    }
-
-    $relative_class = substr($class, $len);
-    $file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
-
-    if (file_exists($file)) {
-        require $file;
-    }
-});
+// 1. Zavedenie Composer Autoloadera
+require_once __DIR__ . '/../vendor/autoload.php';
 
 // 2. Initialize the application Router
 use App\Core\Router;
@@ -54,4 +35,13 @@ $router->post('/admin/books', [AdminBookController::class, 'store']);
 $router->post('/admin/books/import', [ImportController::class, 'import']);
 
 // 4. Dispatch the request (match the URL and execute the code)
-$router->dispatch();
+try {
+    $router->dispatch();
+} catch (\Exception $e) {
+    if ($e->getCode() === 403) {
+        \App\Core\View::renderError(403);
+    } else {
+        error_log($e->getMessage());
+        \App\Core\View::renderError(500);
+    }
+}

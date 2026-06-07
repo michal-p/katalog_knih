@@ -7,3 +7,5 @@
 !/public/assets/.gitkeep
 TERMINAL_COMMANDS.md
 developer_notes.md
+/.phpunit.cache/
+.DS_Store

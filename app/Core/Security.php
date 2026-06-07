@@ -34,7 +34,7 @@ class Security
         $postToken = $_POST['csrf_token'] ?? '';
 
         if (empty($sessionToken) || empty($postToken) || !hash_equals($sessionToken, $postToken)) {
-            View::renderError(403);
+            throw new \Exception('Invalid CSRF token', 403);
         }
     }
 }
