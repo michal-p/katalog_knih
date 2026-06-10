@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Core\View;
 use App\Models\Book;
 use App\Core\Security;
+use App\Core\Database;
 
 /**
  * Handles bulk import of books from the JSON seed file (database/seed/books.json).
@@ -52,27 +53,26 @@ class ImportController
 
         // 3. Iterate over each book and attempt to insert it
         foreach ($books as $index => $bookData) {
-            // Validate required fields
-            if (empty($bookData['title']) || empty($bookData['author']) || empty($bookData['year'])) {
-                $errors[] = "Záznam #" . ($index + 1) . ": chýbajú povinné polia (title, author, year).";
+            // Validate fields using the unified Book::validate method
+            $validationErrors = Book::validate($bookData);
+
+            if (!empty($validationErrors)) {
+                $errors[] = "Záznam #" . ($index + 1) . ": neplatné údaje (" . implode(', ', $validationErrors) . ").";
                 $skipped++;
                 continue;
             }
 
             try {
-                $success = Book::create([
-                    'title'      => $bookData['title'],
-                    'author'     => $bookData['author'],
-                    'year'       => $bookData['year'],
-                    'annotation' => $bookData['annotation'] ?? '',
-                    'rating'     => $bookData['rating'] ?? '',
-                ]);
+                $success = Book::create($bookData);
 
                 if ($success) {
                     $imported++;
+                } else {
+                    $errors[] = "Záznam '{$bookData['title']}': nepodarilo sa uložiť (neznáma chyba).";
+                    $skipped++;
                 }
             } catch (\PDOException $e) {
-                if ($e->errorInfo[1] === 1062) {
+                if (Database::isDuplicateEntry($e)) {
                     // Duplicate entry — book already exists, skip silently
                     $skipped++;
                 } else {

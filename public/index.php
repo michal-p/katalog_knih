@@ -1,23 +1,26 @@
 <?php
 
-// Start session globally for user authentication
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-// 1. Zavedenie Composer Autoloadera
-require_once __DIR__ . '/../vendor/autoload.php';
-
-// 2. Initialize the application Router
+// 1. Namespace aliases
 use App\Core\Router;
 use App\Controllers\BookController;
 use App\Controllers\AuthController;
 use App\Controllers\AdminBookController;
 use App\Controllers\ImportController;
 
+// 2. Start session globally for user authentication
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// 3. Load Composer Autoloader
+// Note: If you add new classes/namespaces and get "Undefined type" errors,
+// make sure to run: docker exec -it ebook_web composer dump-autoload
+require_once __DIR__ . '/../vendor/autoload.php';
+
+// 4. Initialize the application Router
 $router = new Router();
 
-// 3. Define the application routes
+// 5. Define the application routes
 // All routes are protected by default (Default-deny architecture).
 // Routes that need to be publicly accessible must have `isPublic: true`.
 $router->get('/', [BookController::class, 'index'], isPublic: true);
@@ -34,7 +37,7 @@ $router->get('/admin/books/create', [AdminBookController::class, 'create']);
 $router->post('/admin/books', [AdminBookController::class, 'store']);
 $router->post('/admin/books/import', [ImportController::class, 'import']);
 
-// 4. Dispatch the request (match the URL and execute the code)
+// 6. Dispatch the request (match the URL and execute the code)
 try {
     $router->dispatch();
 } catch (\Exception $e) {

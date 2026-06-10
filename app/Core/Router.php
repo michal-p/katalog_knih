@@ -144,8 +144,8 @@ class Router
         if (is_array($action)) {
             [$class, $controllerMethod] = $action;
             if (class_exists($class)) {
-                $controller = new $class();
-                if (method_exists($controller, $controllerMethod)) {
+                if (method_exists($class, $controllerMethod)) {
+                    $controller = new $class();
                     call_user_func_array([$controller, $controllerMethod], $params);
                     return;
                 }

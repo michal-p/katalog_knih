@@ -51,10 +51,21 @@ class Database
                 // Log the real error for the developer (visible via: docker logs -f ebook_web)
                 error_log('Database connection failed: ' . $e->getMessage());
                 http_response_code(500);
-                die('Aplikácia sa nemôže pripojiť k databáze. Kontaktujte administrátora.');
+                die('The application cannot connect to the database. Please contact the administrator.');
             }
         }
 
         return self::$connection;
+    }
+
+    /**
+     * Check if a PDOException represents a duplicate entry error (MySQL 1062).
+     *
+     * @param \PDOException $e
+     * @return bool
+     */
+    public static function isDuplicateEntry(\PDOException $e): bool
+    {
+        return isset($e->errorInfo[1]) && $e->errorInfo[1] === 1062;
     }
 }

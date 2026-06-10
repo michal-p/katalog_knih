@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Core\View;
 use App\Models\Book;
 use App\Core\Security;
+use App\Core\Database;
 
 /**
  * Handles admin CRUD operations for books: listing, creating, and storing.
@@ -39,30 +40,10 @@ class AdminBookController
         // CSRF Protection validation
         Security::verifyCsrf();
 
-        // 1. Sanitize and retrieve input
-        $title      = trim($_POST['title'] ?? '');
-        $author     = trim($_POST['author'] ?? '');
-        $year       = trim($_POST['year'] ?? '');
-        $annotation = trim($_POST['annotation'] ?? '');
-        $rating     = trim($_POST['rating'] ?? '');
+        // 1. Server-side Validation
+        $errors = Book::validate($_POST);
 
-        $errors = [];
-
-        // 2. Server-side Validation
-        if (empty($title)) {
-            $errors[] = 'Názov knihy je povinný.';
-        }
-        if (empty($author)) {
-            $errors[] = 'Autor je povinný.';
-        }
-        if (empty($year) || !is_numeric($year) || strlen($year) !== 4) {
-            $errors[] = 'Rok vydania musí byť platné 4-miestne číslo.';
-        }
-        if ($rating !== '' && (!is_numeric($rating) || $rating < 1 || $rating > 10)) {
-            $errors[] = 'Hodnotenie musí byť číslo od 1 do 10.';
-        }
-
-        // 3. If there are errors, show the form again with errors and old input
+        // 2. If there are errors, show the form again with errors and old input
         if (!empty($errors)) {
             View::render('admin/books/create', [
                 'errors' => $errors,
@@ -71,15 +52,9 @@ class AdminBookController
             return;
         }
 
-        // 4. Save to database
+        // 3. Save to database
         try {
-            $success = Book::create([
-                'title'      => $title,
-                'author'     => $author,
-                'year'       => $year,
-                'annotation' => $annotation,
-                'rating'     => $rating,
-            ]);
+            $success = Book::create($_POST);
 
             if ($success) {
                 // Redirect to prevent form resubmission (PRG pattern) and display a success message
@@ -89,8 +64,7 @@ class AdminBookController
                 $errors[] = 'Nepodarilo sa uložiť knihu do databázy.';
             }
         } catch (\PDOException $e) {
-            // 1062 is the MySQL error code for Duplicate Entry (Unique Constraint violation)
-            if ($e->errorInfo[1] === 1062) {
+            if (Database::isDuplicateEntry($e)) {
                 $errors[] = 'Táto kniha od tohto autora už v databáze existuje.';
             } else {
                 // Log the full error details for the developer (visible via: docker logs -f ebook_web)

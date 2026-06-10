@@ -30,6 +30,10 @@ class BookController
      */
     public function show(string $id): void
     {
+        if (!ctype_digit($id)) {
+            View::renderError(404);
+        }
+
         $book = Book::getById((int) $id);
 
         if (!$book) {

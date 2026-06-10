@@ -39,11 +39,11 @@ class Book
         $stmt = $db->prepare($sql);
         
         return $stmt->execute([
-            'title'      => $data['title'],
-            'author'     => $data['author'],
-            'year'       => (int) $data['year'],
-            'annotation' => $data['annotation'] ?: null,
-            'rating'     => $data['rating'] !== '' ? (int) $data['rating'] : null,
+            'title'      => trim($data['title'] ?? ''),
+            'author'     => trim($data['author'] ?? ''),
+            'year'       => (int) trim($data['year'] ?? ''),
+            'annotation' => trim($data['annotation'] ?? '') ?: null,
+            'rating'     => trim($data['rating'] ?? '') !== '' ? (int) trim($data['rating'] ?? '') : null,
         ]);
     }
 
@@ -63,5 +63,36 @@ class Book
         $book = $stmt->fetch();
         
         return $book ?: null;
+    }
+
+    /**
+     * Validate book data.
+     * 
+     * @param array $data Raw input data
+     * @return array Array of validation error messages (empty if valid)
+     */
+    public static function validate(array $data): array
+    {
+        $errors = [];
+        
+        $title = trim($data['title'] ?? '');
+        $author = trim($data['author'] ?? '');
+        $year = trim($data['year'] ?? '');
+        $rating = trim($data['rating'] ?? '');
+
+        if (empty($title)) {
+            $errors[] = 'Názov knihy je povinný.';
+        }
+        if (empty($author)) {
+            $errors[] = 'Autor je povinný.';
+        }
+        if (empty($year) || !is_numeric($year) || strlen($year) !== 4) {
+            $errors[] = 'Rok vydania musí byť platné 4-miestne číslo.';
+        }
+        if ($rating !== '' && (!is_numeric($rating) || $rating < 1 || $rating > 10)) {
+            $errors[] = 'Hodnotenie musí byť číslo od 1 do 10.';
+        }
+
+        return $errors;
     }
 }
