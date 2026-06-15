@@ -2,7 +2,6 @@
 
 namespace App\Controllers;
 
-use App\Core\View;
 use App\Models\Book;
 use App\Core\Security;
 use App\Core\Database;
@@ -10,7 +9,7 @@ use App\Core\Database;
 /**
  * Handles admin CRUD operations for books: listing, creating, and storing.
  */
-class AdminBookController
+class AdminBookController extends BaseController
 {
     /**
      * Show the admin dashboard with a list of books.
@@ -19,7 +18,7 @@ class AdminBookController
     {
         $books = Book::getAll();
 
-        View::render('admin/books/index', [
+        $this->render('admin/books/index', [
             'books' => $books
         ]);
     }
@@ -29,7 +28,7 @@ class AdminBookController
      */
     public function create(): void
     {
-        View::render('admin/books/create');
+        $this->render('admin/books/create');
     }
 
     /**
@@ -45,7 +44,7 @@ class AdminBookController
 
         // 2. If there are errors, show the form again with errors and old input
         if (!empty($errors)) {
-            View::render('admin/books/create', [
+            $this->render('admin/books/create', [
                 'errors' => $errors,
                 'old'    => $_POST
             ]);
@@ -58,8 +57,7 @@ class AdminBookController
 
             if ($success) {
                 // Redirect to prevent form resubmission (PRG pattern) and display a success message
-                header('Location: /admin/books?success=1');
-                exit;
+                $this->redirect('/admin/books?success=1');
             } else {
                 $errors[] = 'Nepodarilo sa uložiť knihu do databázy.';
             }
@@ -74,7 +72,7 @@ class AdminBookController
         }
 
         // If we reach here, it means save failed, so render the form with errors
-        View::render('admin/books/create', [
+        $this->render('admin/books/create', [
             'errors' => $errors,
             'old'    => $_POST
         ]);

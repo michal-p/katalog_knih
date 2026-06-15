@@ -2,7 +2,6 @@
 
 namespace App\Controllers;
 
-use App\Core\View;
 use App\Models\User;
 use App\Core\Security;
 use App\Core\Auth;
@@ -10,7 +9,7 @@ use App\Core\Auth;
 /**
  * Handles user authentication: login form display, credential verification, and logout.
  */
-class AuthController
+class AuthController extends BaseController
 {
     /**
      * Display the login form.
@@ -19,11 +18,10 @@ class AuthController
     {
         // If already logged in, redirect to admin area
         if (Auth::check()) {
-            header('Location: /admin/books');
-            exit;
+            $this->redirect('/admin/books');
         }
 
-        View::render('admin/login');
+        $this->render('admin/login');
     }
 
     /**
@@ -33,8 +31,7 @@ class AuthController
     {
         // If already logged in, redirect to admin area
         if (Auth::check()) {
-            header('Location: /admin/books');
-            exit;
+            $this->redirect('/admin/books');
         }
 
         // CSRF Protection validation
@@ -57,15 +54,14 @@ class AuthController
                 Auth::login($user);
 
                 // Redirect to admin dashboard
-                header('Location: /admin/books');
-                exit;
+                $this->redirect('/admin/books');
             } else {
                 $errors[] = 'Nesprávne používateľské meno alebo heslo.';
             }
         }
 
         // Render login view again with errors and old input
-        View::render('admin/login', [
+        $this->render('admin/login', [
             'errors' => $errors,
             'old' => [
                 'username' => $username
@@ -82,7 +78,6 @@ class AuthController
         Auth::logout();
 
         // Redirect to login page
-        header('Location: /login');
-        exit;
+        $this->redirect('/login');
     }
 }

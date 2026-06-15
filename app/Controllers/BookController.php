@@ -2,13 +2,12 @@
 
 namespace App\Controllers;
 
-use App\Core\View;
 use App\Models\Book;
 
 /**
  * Handles public-facing book pages: listing all books and showing individual book details.
  */
-class BookController
+class BookController extends BaseController
 {
     /**
      * Display the list of all books (Homepage).
@@ -18,7 +17,7 @@ class BookController
         // 1. Fetch data from the database using the Model
         $books = Book::getAll();
 
-        View::render('books/index', [
+        $this->render('books/index', [
             'books' => $books
         ]);
     }
@@ -31,16 +30,16 @@ class BookController
     public function show(string $id): void
     {
         if (!ctype_digit($id)) {
-            View::renderError(404);
+            $this->renderError(404);
         }
 
         $book = Book::getById((int) $id);
 
         if (!$book) {
-            View::renderError(404);
+            $this->renderError(404);
         }
 
-        View::render('books/show', [
+        $this->render('books/show', [
             'book' => $book
         ]);
     }

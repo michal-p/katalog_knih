@@ -2,7 +2,6 @@
 
 namespace App\Controllers;
 
-use App\Core\View;
 use App\Models\Book;
 use App\Core\Security;
 use App\Core\Database;
@@ -10,7 +9,7 @@ use App\Core\Database;
 /**
  * Handles bulk import of books from the JSON seed file (database/seed/books.json).
  */
-class ImportController
+class ImportController extends BaseController
 {
     /**
      * Path to the JSON seed file, relative to project root.
@@ -27,24 +26,21 @@ class ImportController
 
         // 1. Check if the seed file exists
         if (!file_exists(self::SEED_FILE)) {
-            header('Location: /admin/books?import_error=' . urlencode('Súbor books.json nebol nájdený.'));
-            exit;
+            $this->redirect('/admin/books?import_error=' . urlencode('Súbor books.json nebol nájdený.'));
         }
 
         // 2. Read and decode the JSON file
         $json = file_get_contents(self::SEED_FILE);
 
         if ($json === false) {
-            header('Location: /admin/books?import_error=' . urlencode('Nepodarilo sa prečítať súbor books.json.'));
-            exit;
+            $this->redirect('/admin/books?import_error=' . urlencode('Nepodarilo sa prečítať súbor books.json.'));
         }
 
         $books = json_decode($json, true);
 
         // json_decode returns null if the JSON is malformed
         if ($books === null) {
-            header('Location: /admin/books?import_error=' . urlencode('Súbor books.json obsahuje neplatný JSON.'));
-            exit;
+            $this->redirect('/admin/books?import_error=' . urlencode('Súbor books.json obsahuje neplatný JSON.'));
         }
 
         $imported = 0;
@@ -94,7 +90,6 @@ class ImportController
             'skipped'  => $skipped,
         ]);
 
-        header('Location: /admin/books?' . $params);
-        exit;
+        $this->redirect('/admin/books?' . $params);
     }
 }
