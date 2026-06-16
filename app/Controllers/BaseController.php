@@ -18,13 +18,14 @@ abstract class BaseController
     }
 
     /**
-     * Render an error page.
+     * Render an error page and stop execution.
      *
      * @param int $code HTTP status code (e.g. 404, 500)
      */
     protected function renderError(int $code): void
     {
         View::renderError($code);
+        exit;
     }
 
     /**

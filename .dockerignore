@@ -1,0 +1,38 @@
+# Exclude sensitive environment files — these must be passed via environment
+# variables or Docker secrets at runtime, never baked into the image.
+# Leading / anchors the pattern to the project root (like .gitignore).
+/.env
+/.env.*
+
+# Exclude version control metadata
+/.git
+/.gitignore
+
+# Exclude CI/CD configuration (GitHub Actions, Dependabot, etc.)
+/.github
+
+# Exclude development dependencies — they are installed fresh during the
+# production build stage via: composer install --no-dev --optimize-autoloader
+/vendor/
+/node_modules/
+
+# Exclude development/test tooling
+/tests/
+/phpunit.xml
+/.phpunit.cache/
+/webpack.config.js
+/package.json
+/package-lock.json
+/src/
+
+# Exclude compiled assets (generated during build, not needed in source form)
+/public/assets/css/
+/public/assets/js/
+
+# Exclude editor and OS artifacts
+/.vscode/
+.DS_Store
+
+# Exclude project documentation files that are not needed at runtime
+/*.md
+/docs/

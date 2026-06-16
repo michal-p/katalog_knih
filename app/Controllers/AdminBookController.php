@@ -52,6 +52,8 @@ class AdminBookController extends BaseController
         }
 
         // 3. Save to database
+        // Book::create() internally filters only the allowed fields (see Book::FILLABLE),
+        // so it is safe to pass the full $_POST array here.
         try {
             $success = Book::create($_POST);
 

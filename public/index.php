@@ -1,21 +1,23 @@
 <?php
 
-// 1. Namespace aliases
+// 1. Load Composer Autoloader (must be first — registers the PSR-4 autoloader
+//    before any class alias below is resolved at runtime)
+// Note: If you add new classes/namespaces and get "Undefined type" errors,
+// make sure to run: docker exec -it ebook_web composer dump-autoload
+require_once __DIR__ . '/../vendor/autoload.php';
+
+// 2. Namespace aliases (resolved at compile time, but classes are loaded via
+//    the autoloader registered above)
 use App\Core\Router;
 use App\Controllers\BookController;
 use App\Controllers\AuthController;
 use App\Controllers\AdminBookController;
 use App\Controllers\ImportController;
 
-// 2. Start session globally for user authentication
+// 3. Start session globally for user authentication
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-
-// 3. Load Composer Autoloader
-// Note: If you add new classes/namespaces and get "Undefined type" errors,
-// make sure to run: docker exec -it ebook_web composer dump-autoload
-require_once __DIR__ . '/../vendor/autoload.php';
 
 // 4. Initialize the application Router
 $router = new Router();
