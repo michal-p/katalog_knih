@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use App\Core\Auth;
 
 class AuthTest extends TestCase
@@ -30,9 +31,8 @@ class AuthTest extends TestCase
     /**
      * Test that login sets session variables and unsets the CSRF token to prevent session fixation.
      * The token is not regenerated immediately during login, but rather lazily when next requested.
-     *
-     * @runInSeparateProcess
      */
+    #[RunInSeparateProcess]
     public function testLoginSetsSessionVariablesAndClearsCsrfToken()
     {
         // Simulate the state before logging in
@@ -55,9 +55,7 @@ class AuthTest extends TestCase
         $this->assertArrayNotHasKey('csrf_token', $_SESSION, 'Old CSRF token should be cleared (session fixation protection).');
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[RunInSeparateProcess]
     public function testLogoutClearsSession()
     {
         // Simulate a logged-in user
