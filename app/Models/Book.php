@@ -50,14 +50,14 @@ class Book
 
         $stmt = $db->prepare($sql);
 
+        $rating = trim($filtered['rating'] ?? '');
+
         return $stmt->execute([
             'title'      => trim($filtered['title']      ?? ''),
             'author'     => trim($filtered['author']     ?? ''),
             'year'       => (int) trim($filtered['year'] ?? ''),
             'annotation' => trim($filtered['annotation'] ?? '') ?: null,
-            'rating'     => trim($filtered['rating']     ?? '') !== ''
-                                ? (int) trim($filtered['rating'] ?? '')
-                                : null,
+            'rating'     => $rating !== '' ? (int) $rating : null,
         ]);
     }
 
@@ -100,10 +100,12 @@ class Book
         if (empty($author)) {
             $errors[] = 'Autor je povinný.';
         }
+        $maxYear = (int) date('Y') + 1;
+        
         if (empty($year) || !ctype_digit($year) || strlen($year) !== 4) {
             $errors[] = 'Rok vydania musí byť platné 4-miestne číslo.';
-        } elseif ((int) $year < 1000 || (int) $year > 2099) {
-            $errors[] = 'Rok vydania musí byť v rozsahu 1000 – 2099.';
+        } elseif ((int) $year < 1000 || (int) $year > $maxYear) {
+            $errors[] = sprintf('Rok vydania musí byť v rozsahu 1000 – %d.', $maxYear);
         }
         if ($rating !== '' && (
             filter_var($rating, FILTER_VALIDATE_INT) === false

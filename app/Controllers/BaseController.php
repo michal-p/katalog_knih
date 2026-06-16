@@ -35,7 +35,14 @@ abstract class BaseController
      */
     protected function redirect(string $url): void
     {
-        header("Location: $url");
+        // Sanitize the URL to prevent Header Injection and HTTP Response Splitting attacks.
+        // It strips control characters like newlines (\r, \n) which could manipulate HTTP headers.
+        $sanitizedUrl = filter_var($url, FILTER_SANITIZE_URL);
+        
+        header("Location: $sanitizedUrl");
+        
+        // Always call exit/die after redirection. Sending the 'Location' header only instructs
+        // the browser to redirect, but does NOT stop PHP from executing the remaining code.
         exit;
     }
 }
