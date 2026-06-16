@@ -28,6 +28,11 @@ class Database
     private function __clone() {}
 
     /**
+     * Private wakeup method to prevent unserializing the instance.
+     */
+    private function __wakeup() {}
+
+    /**
      * Get the database connection. Creates it if it doesn't exist yet.
      */
     public static function getConnection(): PDO
