@@ -35,14 +35,15 @@ class View
      */
     public static function asset(string $path): string
     {
-        $absolutePath = __DIR__ . '/../../public/' . ltrim($path, '/');
+        $cleanPath = ltrim($path, '/');
+        $absolutePath = __DIR__ . '/../../public/' . $cleanPath;
         $version = '';
 
         if (file_exists($absolutePath)) {
             $version = '?v=' . filemtime($absolutePath);
         }
 
-        return '/' . ltrim($path, '/') . $version;
+        return '/' . $cleanPath . $version;
     }
 
     /**

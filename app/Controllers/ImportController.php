@@ -2,14 +2,14 @@
 
 namespace App\Controllers;
 
-use App\Core\View;
 use App\Models\Book;
 use App\Core\Security;
+use App\Core\Database;
 
 /**
  * Handles bulk import of books from the JSON seed file (database/seed/books.json).
  */
-class ImportController
+class ImportController extends BaseController
 {
     /**
      * Path to the JSON seed file, relative to project root.
@@ -26,24 +26,21 @@ class ImportController
 
         // 1. Check if the seed file exists
         if (!file_exists(self::SEED_FILE)) {
-            header('Location: /admin/books?import_error=' . urlencode('Súbor books.json nebol nájdený.'));
-            exit;
+            $this->redirect('/admin/books?import_error=' . urlencode('Súbor books.json nebol nájdený.'));
         }
 
         // 2. Read and decode the JSON file
         $json = file_get_contents(self::SEED_FILE);
 
         if ($json === false) {
-            header('Location: /admin/books?import_error=' . urlencode('Nepodarilo sa prečítať súbor books.json.'));
-            exit;
+            $this->redirect('/admin/books?import_error=' . urlencode('Nepodarilo sa prečítať súbor books.json.'));
         }
 
         $books = json_decode($json, true);
 
         // json_decode returns null if the JSON is malformed
         if ($books === null) {
-            header('Location: /admin/books?import_error=' . urlencode('Súbor books.json obsahuje neplatný JSON.'));
-            exit;
+            $this->redirect('/admin/books?import_error=' . urlencode('Súbor books.json obsahuje neplatný JSON.'));
         }
 
         $imported = 0;
@@ -52,27 +49,26 @@ class ImportController
 
         // 3. Iterate over each book and attempt to insert it
         foreach ($books as $index => $bookData) {
-            // Validate required fields
-            if (empty($bookData['title']) || empty($bookData['author']) || empty($bookData['year'])) {
-                $errors[] = "Záznam #" . ($index + 1) . ": chýbajú povinné polia (title, author, year).";
+            // Validate fields using the unified Book::validate method
+            $validationErrors = Book::validate($bookData);
+
+            if (!empty($validationErrors)) {
+                $errors[] = "Záznam #" . ($index + 1) . ": neplatné údaje (" . implode(', ', $validationErrors) . ").";
                 $skipped++;
                 continue;
             }
 
             try {
-                $success = Book::create([
-                    'title'      => $bookData['title'],
-                    'author'     => $bookData['author'],
-                    'year'       => $bookData['year'],
-                    'annotation' => $bookData['annotation'] ?? '',
-                    'rating'     => $bookData['rating'] ?? '',
-                ]);
+                $success = Book::create($bookData);
 
                 if ($success) {
                     $imported++;
+                } else {
+                    $errors[] = "Záznam '{$bookData['title']}': nepodarilo sa uložiť (neznáma chyba).";
+                    $skipped++;
                 }
             } catch (\PDOException $e) {
-                if ($e->errorInfo[1] === 1062) {
+                if (Database::isDuplicateEntry($e)) {
                     // Duplicate entry — book already exists, skip silently
                     $skipped++;
                 } else {
@@ -94,7 +90,6 @@ class ImportController
             'skipped'  => $skipped,
         ]);
 
-        header('Location: /admin/books?' . $params);
-        exit;
+        $this->redirect('/admin/books?' . $params);
     }
 }

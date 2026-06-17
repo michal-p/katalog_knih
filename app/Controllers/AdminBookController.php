@@ -2,14 +2,14 @@
 
 namespace App\Controllers;
 
-use App\Core\View;
 use App\Models\Book;
 use App\Core\Security;
+use App\Core\Database;
 
 /**
  * Handles admin CRUD operations for books: listing, creating, and storing.
  */
-class AdminBookController
+class AdminBookController extends BaseController
 {
     /**
      * Show the admin dashboard with a list of books.
@@ -18,7 +18,7 @@ class AdminBookController
     {
         $books = Book::getAll();
 
-        View::render('admin/books/index', [
+        $this->render('admin/books/index', [
             'books' => $books
         ]);
     }
@@ -28,7 +28,7 @@ class AdminBookController
      */
     public function create(): void
     {
-        View::render('admin/books/create');
+        $this->render('admin/books/create');
     }
 
     /**
@@ -39,58 +39,32 @@ class AdminBookController
         // CSRF Protection validation
         Security::verifyCsrf();
 
-        // 1. Sanitize and retrieve input
-        $title      = trim($_POST['title'] ?? '');
-        $author     = trim($_POST['author'] ?? '');
-        $year       = trim($_POST['year'] ?? '');
-        $annotation = trim($_POST['annotation'] ?? '');
-        $rating     = trim($_POST['rating'] ?? '');
+        // 1. Server-side Validation
+        $errors = Book::validate($_POST);
 
-        $errors = [];
-
-        // 2. Server-side Validation
-        if (empty($title)) {
-            $errors[] = 'Názov knihy je povinný.';
-        }
-        if (empty($author)) {
-            $errors[] = 'Autor je povinný.';
-        }
-        if (empty($year) || !is_numeric($year) || strlen($year) !== 4) {
-            $errors[] = 'Rok vydania musí byť platné 4-miestne číslo.';
-        }
-        if ($rating !== '' && (!is_numeric($rating) || $rating < 1 || $rating > 10)) {
-            $errors[] = 'Hodnotenie musí byť číslo od 1 do 10.';
-        }
-
-        // 3. If there are errors, show the form again with errors and old input
+        // 2. If there are errors, show the form again with errors and old input
         if (!empty($errors)) {
-            View::render('admin/books/create', [
+            $this->render('admin/books/create', [
                 'errors' => $errors,
                 'old'    => $_POST
             ]);
             return;
         }
 
-        // 4. Save to database
+        // 3. Save to database
+        // Book::create() internally filters only the allowed fields (see Book::FILLABLE),
+        // so it is safe to pass the full $_POST array here.
         try {
-            $success = Book::create([
-                'title'      => $title,
-                'author'     => $author,
-                'year'       => $year,
-                'annotation' => $annotation,
-                'rating'     => $rating,
-            ]);
+            $success = Book::create($_POST);
 
             if ($success) {
                 // Redirect to prevent form resubmission (PRG pattern) and display a success message
-                header('Location: /admin/books?success=1');
-                exit;
+                $this->redirect('/admin/books?success=1');
             } else {
                 $errors[] = 'Nepodarilo sa uložiť knihu do databázy.';
             }
         } catch (\PDOException $e) {
-            // 1062 is the MySQL error code for Duplicate Entry (Unique Constraint violation)
-            if ($e->errorInfo[1] === 1062) {
+            if (Database::isDuplicateEntry($e)) {
                 $errors[] = 'Táto kniha od tohto autora už v databáze existuje.';
             } else {
                 // Log the full error details for the developer (visible via: docker logs -f ebook_web)
@@ -100,7 +74,7 @@ class AdminBookController
         }
 
         // If we reach here, it means save failed, so render the form with errors
-        View::render('admin/books/create', [
+        $this->render('admin/books/create', [
             'errors' => $errors,
             'old'    => $_POST
         ]);

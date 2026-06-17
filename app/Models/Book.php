@@ -10,6 +10,12 @@ use App\Core\Database;
 class Book
 {
     /**
+     * The fields that are allowed to be mass-assigned.
+     * Any key in the input array that is NOT listed here will be silently ignored.
+     */
+    private const FILLABLE = ['title', 'author', 'year', 'annotation', 'rating'];
+
+    /**
      * Get all books from the database.
      */
     public static function getAll(): array
@@ -25,25 +31,33 @@ class Book
 
     /**
      * Create a new book record in the database.
-     * 
-     * @param array $data Associative array with keys: title, author, year, annotation, rating
+     *
+     * Only fields listed in FILLABLE are accepted — any extra keys in $data
+     * are silently discarded here, so callers do not need their own whitelist.
+     *
+     * @param array $data Raw input array (e.g. $_POST)
      * @return bool True on success, false on failure
      */
     public static function create(array $data): bool
     {
         $db = Database::getConnection();
-        
-        $sql = "INSERT INTO books (title, author, year, annotation, rating) 
+
+        // Discard any keys that are not in the allowed list
+        $filtered = array_intersect_key($data, array_flip(self::FILLABLE));
+
+        $sql = "INSERT INTO books (title, author, year, annotation, rating)
                 VALUES (:title, :author, :year, :annotation, :rating)";
-                
+
         $stmt = $db->prepare($sql);
-        
+
+        $rating = trim($filtered['rating'] ?? '');
+
         return $stmt->execute([
-            'title'      => $data['title'],
-            'author'     => $data['author'],
-            'year'       => (int) $data['year'],
-            'annotation' => $data['annotation'] ?: null,
-            'rating'     => $data['rating'] !== '' ? (int) $data['rating'] : null,
+            'title'      => trim($filtered['title']      ?? ''),
+            'author'     => trim($filtered['author']     ?? ''),
+            'year'       => (int) trim($filtered['year'] ?? ''),
+            'annotation' => trim($filtered['annotation'] ?? '') ?: null,
+            'rating'     => $rating !== '' ? (int) $rating : null,
         ]);
     }
 
@@ -63,5 +77,44 @@ class Book
         $book = $stmt->fetch();
         
         return $book ?: null;
+    }
+
+    /**
+     * Validate book data.
+     * 
+     * @param array $data Raw input data
+     * @return array Array of validation error messages (empty if valid)
+     */
+    public static function validate(array $data): array
+    {
+        $errors = [];
+        
+        $title = trim($data['title'] ?? '');
+        $author = trim($data['author'] ?? '');
+        $year = trim($data['year'] ?? '');
+        $rating = trim($data['rating'] ?? '');
+
+        if (empty($title)) {
+            $errors[] = 'Názov knihy je povinný.';
+        }
+        if (empty($author)) {
+            $errors[] = 'Autor je povinný.';
+        }
+        $maxYear = (int) date('Y') + 1;
+        
+        if (empty($year) || !ctype_digit($year) || strlen($year) !== 4) {
+            $errors[] = 'Rok vydania musí byť platné 4-miestne číslo.';
+        } elseif ((int) $year < 1000 || (int) $year > $maxYear) {
+            $errors[] = sprintf('Rok vydania musí byť v rozsahu 1000 – %d.', $maxYear);
+        }
+        if ($rating !== '' && (
+            filter_var($rating, FILTER_VALIDATE_INT) === false
+            || (int) $rating < 1
+            || (int) $rating > 10
+        )) {
+            $errors[] = 'Hodnotenie musí byť celé číslo od 1 do 10.';
+        }
+
+        return $errors;
     }
 }
