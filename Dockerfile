@@ -1,5 +1,5 @@
 # 1. Base stage with PHP, Apache extensions, and Composer
-FROM php:8.2-apache AS base
+FROM php:8.5-apache AS base
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     zip \
